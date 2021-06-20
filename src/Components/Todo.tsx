@@ -71,9 +71,14 @@ const Todo: React.FC<{
             <td>
                 <div className="row px-3">
                 <div className="mr-auto my-2">{todo.todo}</div>
-                <div className="d-line ml-auto" style={ showBtn ? {display:""}:{display:"none"}}>
+                <div className="d-line ml-auto" style={ showBtn&&!todo.isLocked ? {display:""}:{display:"none"}}>
                 <Button variant="btn btn-secondary btn-sm" onClick={btnEditOnClick}>Edit</Button>
                 <Button variant="btn btn-danger btn-sm ml-1" onClick={(btnDeleteOnClick)}>Remove</Button>
+                </div>
+                <div className="d-line ml-auto" style={ todo.isLocked ? {display:""}:{display:"none"}}>
+                <Form.Text className="text-muted">
+                     editing...
+                    </Form.Text>
                 </div>
                 </div>
             </td>

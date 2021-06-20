@@ -5,7 +5,7 @@ class mTodo {
     private id:string;
     public todo:string;
     public isEdit:boolean;
-    public isShow:boolean;
+    public isLocked: boolean;
 
     public get getId() : string {
         return this.id;
@@ -16,23 +16,12 @@ class mTodo {
         this.id = id;
         this.todo = todo;
         this.isEdit = false;
-        this.isShow = true;
+        this.isLocked = false;
     }
 
     public static CreateTodo(todo:string)
     {
         return new mTodo(getUUID(),todo);
-    }
-
-    public AddTodo() {
-        
-    }
-
-    /**
-     * RemoveTodo
-     */
-    public RemoveTodo() {
-        
     }
     
 }
