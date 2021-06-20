@@ -26,6 +26,8 @@ const Todo: React.FC<{
 
     const [todoText, setTodoText] = useState(todo.todo);
 
+    const [showInvalid, setShowInvalid] = useState(false);
+
     const ShowBtn = (e:any) =>
     {
         setShowBtn(true)
@@ -53,9 +55,14 @@ const Todo: React.FC<{
     }
     function enterUpdateTodo(e:any)
     {
-        console.log(e.key);
         if(e.key === 'Enter')
         {
+            if(todoText=="")
+            {
+                setShowInvalid(true);
+                return;
+            }
+            setShowInvalid(false);
             todo.todo = todoText
             updateTodoHandler(todo);
         }
@@ -88,12 +95,17 @@ const Todo: React.FC<{
             <div className="row">
             <div className="col-12">
             <Form.Control  
+            required
             className="form-control-md" 
             value={todoText} 
             onKeyUp={abortEditOnKeyUp} 
             onKeyPress={enterUpdateTodo}
             onChange={(e)=>{setTodoText(e.target.value)}}
-            ></Form.Control></div>
+            ></Form.Control>
+            <Form.Control.Feedback type="invalid" style={showInvalid ? {display:"block"} : {display:"none"}}>
+            This field cannot be blank.
+          </Form.Control.Feedback>
+            </div>
             </div>
         </td>
     </tr> 

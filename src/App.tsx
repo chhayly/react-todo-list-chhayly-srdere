@@ -3,7 +3,6 @@ import './App.css';
 import { Button, Table , Card ,Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import  Header  from './Components/Header';
-import Todo from './Components/Todo';
 import Filter from './Components/Filter';
 import mTodo from './Models/mTodo';
 import TodoInput from './Components/TodoInput';
@@ -43,6 +42,10 @@ function App() {
   //AddTodo
   function addTodo(todo:string)
   {
+    if(CheckDuplicateTodo(todo))
+    {
+      if(!window.confirm("Warning: Duplicated todo entered. Do you want to procceed?")) return;
+    }
     setTodos(t=> [mTodo.CreateTodo(todo),...t])
   }
   //updateTodo
@@ -76,6 +79,11 @@ function App() {
   }
   function updateTodoHandler(todo:mTodo)
   {
+    if(CheckDuplicateTodo(todo.todo))
+    {
+      if(!window.confirm("Warning: Duplicated todo entered. Do you want to procceed?")) return;
+    }
+
     abortEditTodoHandler();
     setTodos(t=>t.map(d=>
       {
@@ -96,6 +104,11 @@ function App() {
   function deleteBtnHandler(id:string)
   {
     setTodos(t=>t.filter(d=>d.getId !== id));
+  }
+
+  function CheckDuplicateTodo(todo:string)
+  {
+    return todos.findIndex(t=> t.todo.toUpperCase()==todo.toUpperCase()) >-1
   }
   
 
