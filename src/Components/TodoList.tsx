@@ -24,7 +24,7 @@ const TodoList : React.FC<
     {
 
     return (<>
-    {todos.filter(d=> d.todo.indexOf(filterKeyword)>-1)
+    {todos.filter(d=> d.todo.toUpperCase().indexOf(filterKeyword.toUpperCase())>-1)
     .map((t)=> (
     <Todo 
     todo={t}
