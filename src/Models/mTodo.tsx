@@ -1,4 +1,4 @@
-import getUUID from '../Services/Common';
+import getUUID from '../Utilities/Common';
 
 class mTodo {
 
