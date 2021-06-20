@@ -79,11 +79,6 @@ function App() {
   }
   function updateTodoHandler(todo:mTodo)
   {
-    if(CheckDuplicateTodo(todo.todo))
-    {
-      if(!window.confirm("Warning: Duplicated todo entered. Do you want to procceed?")) return;
-    }
-
     abortEditTodoHandler();
     setTodos(t=>t.map(d=>
       {

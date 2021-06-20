@@ -47,7 +47,7 @@ const TodoInput : React.FC<{addTodo:Function,onFocus:Function}> = ({addTodo,onFo
             onKeyUp={AbortEdit} 
             onKeyPress={enterUpdateTodo}
             onFocus={onFocusTodoInput} 
-            placeholder="Create todo"
+            placeholder="Enter todo here..."
             ></Form.Control></div>
             <Form.Control.Feedback className="ml-3" type="invalid" style={showInvalid ? {display:"block"} : {display:"none"}}>
             This field cannot be blank.
