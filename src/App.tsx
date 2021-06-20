@@ -7,6 +7,7 @@ import Todo from './Components/Todo';
 import Filter from './Components/Filter';
 import mTodo from './Models/mTodo';
 import TodoInput from './Components/TodoInput';
+import TodoList from './Components/TodoList';
 
 let mytodos = 
 [
@@ -24,18 +25,20 @@ function App() {
 
   //Filter Componenet
   const [filterKeyword, setFilterKeyword] = useState("");
-
   const [todos,setTodos] = useState(mytd);
-  
+
+
+  /*------------------------------------------------------------------------*/
   useEffect(() => {    
     console.log("update")
     // Update the document title using the browser API    
-
   });
-  
+  /*------------------------------------------------------------------------*/
+
+
   //getTodos
   function getTodos() {
-    return mytodos.map<mTodo>((t)=> new mTodo(t.id,t.todo,new Date()));
+    return mytodos.map<mTodo>((t)=> new mTodo(t.id,t.todo));
   }
   //AddTodo
   function addTodo(todo:string)
@@ -56,17 +59,43 @@ function App() {
 
 
   //FilterTodoList
-  function filterTodoList(keyword:string)
+  function filterInputOnChange(keyword:string)
   {
     setFilterKeyword(keyword);
   }
-  //GetTodosList
-  function getTodosList(keyword:string)
+
+
+  //TodoList Component
+  function editBtnHandler(id:string)
   {
-    return todos
-    .filter((t)=> t.getTodo.indexOf(keyword)>-1)
-    .map((t)=> <Todo todo={t} deleteTodo={deleteTodo} updateTodo={updateTodo} ></Todo>);
-    
+    setTodos(t=>t.map(d=>
+      {
+        d.isEdit = d.getId === id;
+        return d;
+      }))
+  }
+  function updateTodoHandler(todo:mTodo)
+  {
+    abortEditTodoHandler();
+    setTodos(t=>t.map(d=>
+      {
+        if(d.getId === todo.getId)
+        {
+          return todo;
+        }
+        return d;
+      }))
+  }
+  function abortEditTodoHandler()
+  {
+    setTodos(t=>t.map(d=>{
+      d.isEdit = false;
+      return d;
+    }));
+  }
+  function deleteBtnHandler(id:string)
+  {
+    setTodos(t=>t.filter(d=>d.getId !== id));
   }
   
 
@@ -74,11 +103,24 @@ function App() {
     <>
       <div className="container mx-auto px-auto">
       <Header></Header>
-      <Filter filterKeyword={filterKeyword} filterTodoList={filterTodoList}></Filter>
+      <Filter 
+      filterKeyword={filterKeyword} 
+      filterInputOnChange={filterInputOnChange}
+      onFocus={abortEditTodoHandler}></Filter>
       <Table striped bordered hover variant="light" className="mt-4">
         <tbody>
-          <TodoInput addTodo={addTodo}></TodoInput>
-        {getTodosList(filterKeyword)}
+          <TodoInput 
+          addTodo={addTodo}
+          onFocus={abortEditTodoHandler}
+          ></TodoInput>
+          <TodoList
+          todos={todos}
+          filterKeyword={filterKeyword}
+          editBtnHandler={editBtnHandler}
+          updateTodoHandler={updateTodoHandler}
+          abortEditTodoHandler = {abortEditTodoHandler}
+          deleteBtnHandler={deleteBtnHandler}
+          ></TodoList>
         </tbody>
       </Table>
       </div>

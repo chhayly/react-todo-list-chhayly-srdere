@@ -3,30 +3,25 @@ import getUUID from '../Services/Common';
 class mTodo {
 
     private id:string;
-    private todo:string;
-    private createdDate:Date;
+    public todo:string;
+    public isEdit:boolean;
+    public isShow:boolean;
 
     public get getId() : string {
         return this.id;
     }
-    public get getTodo() : string {
-        return this.todo;
-    }
 
-    public set setTodo(v : string) {
-        this.todo = v;
-    }    
-
-    constructor(id:string,todo:string,createdDate:Date)
+    constructor(id:string,todo:string)
     {
         this.id = id;
         this.todo = todo;
-        this.createdDate = createdDate;
+        this.isEdit = false;
+        this.isShow = true;
     }
 
     public static CreateTodo(todo:string)
     {
-        return new mTodo(getUUID(),todo,new Date());
+        return new mTodo(getUUID(),todo);
     }
 
     public AddTodo() {
