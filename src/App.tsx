@@ -9,50 +9,43 @@ import TodoInput from './Components/TodoInput';
 import TodoList from './Components/TodoList';
 
 import { collection, getDocs, addDoc , updateDoc , deleteDoc, setDoc, doc} from "firebase/firestore"; 
-import  db  from "./DataAccessLayers/firebase";
+import {db,dbRT} from "./DataAccessLayers/firebase";
+
+
+import { getDatabase, ref, set , onDisconnect , onValue } from "firebase/database";
+
+import {MD5} from './Utilities/Common';
 
 
 function App() {
+
+
   //Filter Componenet
   const [filterKeyword, setFilterKeyword] = useState("");
   const [todos,setTodos] = useState<mTodo[]>([]);
+  const [todosChecksum, setTodosChecksum] = useState("");
 
   /*------------------------------------------------------------------------*/
-  useEffect(() => {    
-    const  getTodos = async()=>
-    {
-      console.log("getTodos")
-      const todofromserver = await getDocs(collection(db, "todos"))
-      const _todos = todofromserver.docs.map(t=> {
-        return new mTodo(t.data().id,t.data().todo,t.data().isLocked)
-      });
-      setTodos(_todos);
-    }
-    getTodos();
-    // Update the document title using the browser API    
-  },[filterKeyword]);
+  useEffect(() => {  
+     getTodos(); 
+  },[todosChecksum]);
 
-  useEffect(()=>
+  useEffect(() => { 
+   onValue(ref(dbRT, '/todos/checksum'), (snapshot) => {
+    setTodosChecksum(snapshot.val())
+  }, {
+    onlyOnce: false
+  });
+},[]);
+
+
+  /*------------------------------------------------------------------------*/
+
+  function getTodosCheckSum()
   {
-    const onbeforeunloadFn = () => {
-      
-      todos.forEach(async t=>
-        {
-          if(t.isEdit)
-          {
-            await updateDoc(doc(db,"todos",t.getId),{isLocked:false});
-          }
-        })
-    }
-
-    window.addEventListener('beforeunload', onbeforeunloadFn);
-    return () => {
-      window.removeEventListener('beforeunload', onbeforeunloadFn);
-    }
-  },[])
-
-
-  /*------------------------------------------------------------------------*/
+    return MD5(todosChecksum);
+    //return MD5(todos.map(t=> JSON.stringify(t)).join(""));
+  }
 
   //AddTodo
   async function addTodo(todo:string)
@@ -65,12 +58,29 @@ function App() {
 
     await setDoc(doc(db, "todos", _todo.getId), _todo.getObject());
 
-    setTodos(t=> [mTodo.CreateTodo(todo),...t])
+    //setTodos(t=> [mTodo.CreateTodo(todo),...t])
+    set(ref(dbRT, 'todos/checksum'), getTodosCheckSum());
   }
+  async function getTodos()
+    {
+      const todofromserver = await getDocs(collection(db, "todos"))
+
+      let _todos = todofromserver.docs.map(t=> {
+        
+        return new mTodo(t.data().id,t.data().todo,t.data().createdDate)
+      });
+
+      _todos = _todos.sort((a,b)=> b.createdDate- a.createdDate);
+
+      setTodos(_todos);
+      //await getTodos();
+     // set(ref(dbRT, 'todos/checksum'), getTodosCheckSum());
+    }
+
   //updateTodo
   async function updateTodo(todo:mTodo)
   {
-    todo.isLocked = false;
+
     await setDoc(doc(db, "todos", todo.getId), todo.getObject());
   }
   //DeleteTodo
@@ -90,29 +100,34 @@ function App() {
   //TodoList Component
   async function editBtnHandler(id:string)
   {
-    await updateDoc(doc(db,"todos",id),
-    {
-      isLocked:true
-    })
+  
 
     setTodos(t=>t.map(d=>
       {
         d.isEdit = d.getId === id;
         return d;
       }))
+     // set(ref(dbRT, 'todos/checksum'), getTodosCheckSum());
   }
-  function updateTodoHandler(todo:mTodo)
+  async function updateTodoHandler(todo:mTodo)
   {
+    if(CheckDuplicateTodo(todo.todo,todo.getId))
+    {
+      if(!window.confirm("Warning: Duplicated todo entered. Do you want to procceed?")) return;
+    }
+
     abortEditTodoHandler();
-    updateTodo(todo);
-    setTodos(t=>t.map(d=>
-      {
-        if(d.getId === todo.getId)
-        {
-          return todo;
-        }
-        return d;
-      }))
+    await updateTodo(todo);
+    // setTodos(t=>t.map(d=>
+    //   {
+    //     if(d.getId === todo.getId)
+    //     {
+    //       return todo;
+    //     }
+    //     return d;
+    //   }))
+    //await getTodos();
+      set(ref(dbRT, 'todos/checksum'), getTodosCheckSum());
   }
   function abortEditTodoHandler()
   {
@@ -121,15 +136,16 @@ function App() {
       return d;
     }));
   }
-  function deleteBtnHandler(id:string)
+  async function deleteBtnHandler(id:string)
   {
     deleteTodo(id);
-    setTodos(t=>t.filter(d=>d.getId !== id));
+    //setTodos(t=>t.filter(d=>d.getId !== id));
+    //await getTodos();
+    set(ref(dbRT, 'todos/checksum'), getTodosCheckSum());
   }
-
-  function CheckDuplicateTodo(todo:string)
+  function CheckDuplicateTodo(todo:string, id:string = "")
   {
-    return todos.findIndex(t=> t.todo.toUpperCase()==todo.toUpperCase()) >-1
+    return todos.findIndex(t=> t.todo.toUpperCase()==todo.toUpperCase()&&t.getId!=id) >-1
   }
   
 
