@@ -6,7 +6,7 @@ const getUUID = () => {
     });
   }
 
-  var MD5 = function (string) {
+  const MD5 = (string) => {
 
     function RotateLeft(lValue, iShiftBits) {
             return (lValue<<iShiftBits) | (lValue>>>(32-iShiftBits));

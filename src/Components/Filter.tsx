@@ -1,8 +1,17 @@
 import React, {Dispatch, HtmlHTMLAttributes, SetStateAction, useState} from 'react';
 import { Form } from 'react-bootstrap';
-import mTodo from '../Models/mTodo';
 
-const Filter: React.FC<{filterKeyword:string,filterInputOnChange:Function,onFocus:Function}> = ({filterKeyword,filterInputOnChange,onFocus}) => {
+const Filter: React.FC<
+{
+    filterKeyword:string,
+    filterInputOnChange:Function,
+    onFocus:Function
+}> = (
+    {
+        filterKeyword,
+        filterInputOnChange,
+        onFocus
+    }) => {
 
     function FocusOnFilter(e:any) {
         onFocus()
