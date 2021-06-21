@@ -8,56 +8,75 @@ import mTodo from './Models/mTodo';
 import TodoInput from './Components/TodoInput';
 import TodoList from './Components/TodoList';
 
-let mytodos = 
-[
-  {id:"1",todo:"finish project",createdDate:new Date()},
-  {id:"2",todo:"research on react",createdDate:new Date()},
-  {id:"3",todo:"call mom",createdDate:new Date()},
-  {id:"4",todo:"buy grocceries",createdDate:new Date()},
-  {id:"5",todo:"buy phone",createdDate:new Date()},
-  {id:"6",todo:"buy car",createdDate:new Date()}
-]
+import { collection, getDocs, addDoc , updateDoc , deleteDoc, setDoc, doc} from "firebase/firestore"; 
+import  db  from "./DataAccessLayers/firebase";
+
 
 function App() {
-
-  const mytd = getTodos();
-
   //Filter Componenet
   const [filterKeyword, setFilterKeyword] = useState("");
-  const [todos,setTodos] = useState(mytd);
-
+  const [todos,setTodos] = useState<mTodo[]>([]);
 
   /*------------------------------------------------------------------------*/
   useEffect(() => {    
-    console.log("update")
+    const  getTodos = async()=>
+    {
+      console.log("getTodos")
+      const todofromserver = await getDocs(collection(db, "todos"))
+      const _todos = todofromserver.docs.map(t=> {
+        return new mTodo(t.data().id,t.data().todo,t.data().isLocked)
+      });
+      setTodos(_todos);
+    }
+    getTodos();
     // Update the document title using the browser API    
-  });
+  },[filterKeyword]);
+
+  useEffect(()=>
+  {
+    const onbeforeunloadFn = () => {
+      
+      todos.forEach(async t=>
+        {
+          if(t.isEdit)
+          {
+            await updateDoc(doc(db,"todos",t.getId),{isLocked:false});
+          }
+        })
+    }
+
+    window.addEventListener('beforeunload', onbeforeunloadFn);
+    return () => {
+      window.removeEventListener('beforeunload', onbeforeunloadFn);
+    }
+  },[])
+
+
   /*------------------------------------------------------------------------*/
 
-
-  //getTodos
-  function getTodos() {
-    return mytodos.map<mTodo>((t)=> new mTodo(t.id,t.todo));
-  }
   //AddTodo
-  function addTodo(todo:string)
+  async function addTodo(todo:string)
   {
     if(CheckDuplicateTodo(todo))
     {
       if(!window.confirm("Warning: Duplicated todo entered. Do you want to procceed?")) return;
     }
+    const _todo = mTodo.CreateTodo(todo);
+
+    await setDoc(doc(db, "todos", _todo.getId), _todo.getObject());
+
     setTodos(t=> [mTodo.CreateTodo(todo),...t])
   }
   //updateTodo
-  function updateTodo(todo:mTodo)
+  async function updateTodo(todo:mTodo)
   {
-    setTodos(t=> t.map(d=> d.getId === todo.getId ? todo : d));
+    todo.isLocked = false;
+    await setDoc(doc(db, "todos", todo.getId), todo.getObject());
   }
   //DeleteTodo
-  function deleteTodo(id:string)
+  async function deleteTodo(id:string)
   {
-     //UI Delete
-    setTodos(t=> t.filter(d=>d.getId!=id));
+    await deleteDoc(doc(db,"todos",id))
   }
 
 
@@ -69,8 +88,13 @@ function App() {
 
 
   //TodoList Component
-  function editBtnHandler(id:string)
+  async function editBtnHandler(id:string)
   {
+    await updateDoc(doc(db,"todos",id),
+    {
+      isLocked:true
+    })
+
     setTodos(t=>t.map(d=>
       {
         d.isEdit = d.getId === id;
@@ -80,6 +104,7 @@ function App() {
   function updateTodoHandler(todo:mTodo)
   {
     abortEditTodoHandler();
+    updateTodo(todo);
     setTodos(t=>t.map(d=>
       {
         if(d.getId === todo.getId)
@@ -98,6 +123,7 @@ function App() {
   }
   function deleteBtnHandler(id:string)
   {
+    deleteTodo(id);
     setTodos(t=>t.filter(d=>d.getId !== id));
   }
 
