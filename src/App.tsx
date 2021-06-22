@@ -128,7 +128,7 @@ function App() {
 
   return (
     <>
-      <div className="container mx-auto px-auto" style={{width:"750px"}}>
+      <div className="container mx-auto px-auto" style={{minWidth:"380px", maxWidth:"60%"}}>
       <Header></Header>
       <Filter 
       filterKeyword={filterKeyword} 
