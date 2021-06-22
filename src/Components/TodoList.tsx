@@ -34,6 +34,7 @@ const TodoList : React.FC<
     deleteBtnHandler={deleteBtnHandler}
     ></Todo>
     ))}
+    <tr className="text-center" style={todos.filter(d=> d.todo.toUpperCase().indexOf(filterKeyword.toUpperCase())>-1).length == 0 ? {display:""}: {display:"none"}} >No result. Create a new one instead!</tr>
 </>);}
 
 export default TodoList; 

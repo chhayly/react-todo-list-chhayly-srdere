@@ -10,7 +10,7 @@ import mTodo from './Models/mTodo';
 import TodoInput from './Components/TodoInput';
 import TodoList from './Components/TodoList';
 
-import { collection, getDocs, addDoc , updateDoc , deleteDoc, setDoc, doc} from "firebase/firestore"; 
+import { collection, getDocs, deleteDoc, setDoc, doc} from "firebase/firestore"; 
 import {db,dbRT} from "./DataAccessLayers/firebase";
 import {  ref, set , onValue } from "firebase/database";
 

@@ -5,14 +5,14 @@ import { getDatabase } from "firebase/database"
 
 
 const firebaseApp = initializeApp({
-  apiKey: "AIzaSyCLnS0xMNUFKCh1h7OKNbTV-S4BrhrIaPc",
-  authDomain: "todo-list-4c75e.firebaseapp.com",
-  databaseURL: "https://todo-list-4c75e-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "todo-list-4c75e",
-  storageBucket: "todo-list-4c75e.appspot.com",
-  messagingSenderId: "1000536309629",
-  appId: "1:1000536309629:web:f87c89f442b34c03bb5614",
-  measurementId: "G-SQ86X2T1FJ"
+  apiKey: "AIzaSyDOzqfnUAGVC42n0MoKvSDbceJiI1Ni0jA",
+  authDomain: "todo-v2-5b628.firebaseapp.com",
+  databaseURL: "https://todo-v2-5b628-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "todo-v2-5b628",
+  storageBucket: "todo-v2-5b628.appspot.com",
+  messagingSenderId: "1043867628995",
+  appId: "1:1043867628995:web:aec184070af313fabc7976",
+  measurementId: "G-LC5BPFLJBL"
   });
 
   const db = getFirestore();

@@ -79,8 +79,8 @@ const Todo: React.FC<{
                 <div className="row px-3">
                 <div className="mr-auto my-2">{todo.todo}</div>
                 <div className="d-line ml-auto" style={ showBtn ? {display:""}:{display:"none"}}>
-                <Button variant="btn btn-secondary btn-sm" onClick={btnEditOnClick}>Edit</Button>
-                <Button variant="btn btn-danger btn-sm ml-1" onClick={(btnDeleteOnClick)}>Remove</Button>
+                <Button variant="btn btn-secondary btn-sm" onClick={btnEditOnClick}>edit</Button>
+                <Button variant="btn btn-danger btn-sm ml-1" onClick={(btnDeleteOnClick)}>remove</Button>
                 </div>
                 </div>
             </td>
