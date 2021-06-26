@@ -4,7 +4,7 @@ import { getFirestore } from "firebase/firestore"
 import { getDatabase } from "firebase/database"
 
 
-const firebaseApp = initializeApp({
+initializeApp({
   apiKey: "AIzaSyDOzqfnUAGVC42n0MoKvSDbceJiI1Ni0jA",
   authDomain: "todo-v2-5b628.firebaseapp.com",
   databaseURL: "https://todo-v2-5b628-default-rtdb.asia-southeast1.firebasedatabase.app",
