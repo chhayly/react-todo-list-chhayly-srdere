@@ -41,6 +41,7 @@ function App() {
     }, {
       onlyOnce: false
     });
+  // eslint-disable-next-line
   }, []);
   /*------------------------------------------------------------------------*/
   //Update Checksum
